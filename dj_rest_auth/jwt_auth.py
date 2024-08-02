@@ -76,8 +76,9 @@ class CookieTokenRefreshSerializer(TokenRefreshSerializer):
 
     def extract_refresh_token(self):
         request = self.context['request']
-        if 'refresh' in request.data and request.data['refresh'] != '':
-            return request.data['refresh']
+        if not api_settings.JWT_AUTH_HTTPONLY:
+            if 'refresh' in request.data and request.data['refresh'] != '':
+                return request.data['refresh']
         cookie_name = api_settings.JWT_AUTH_REFRESH_COOKIE
         if cookie_name and cookie_name in request.COOKIES:
             return request.COOKIES.get(cookie_name)
